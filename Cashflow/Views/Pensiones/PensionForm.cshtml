@@ -1,0 +1,100 @@
+﻿@model Cashflow.ViewModels.PensionFormViewModel
+
+@{
+    ViewBag.Title = "Pagos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.Flujo.Id == 0)
+{
+    <h2 class="text-center">Nueva Pensión</h2>
+}
+else
+{
+    <h2 class="text-center">Editar</h2>
+}
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        @using (Html.BeginForm("Save", "Pensiones"))
+        {
+            <div class="form-group">
+                <label for="Miembro_Id">Miembro</label>
+                @Html.DropDownListFor(p => p.Miembro.Id, new SelectList(Model.Miembros, "Id", "Nombre"), "Seleccione miembro", new { @class = "form-control" })
+                @Html.ValidationMessageFor(p => p.Miembro.Id)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(i => i.Flujo.Nombre)
+                @Html.TextBoxFor(i => i.Flujo.Nombre, new { @class = "form-control" })
+                @Html.ValidationMessageFor(i => i.Flujo.Nombre)
+            </div>
+
+            <div class="form-group">
+                <label>Remuneración</label>
+                <div class="input-group">
+                    <span class="input-group-addon">S/.</span>
+                    @Html.TextBoxFor(i => i.Flujo.Monto, new {@class = "form-control"})
+                </div>
+                @Html.ValidationMessageFor(i => i.Flujo.Monto)
+            </div>
+
+            <div class="form-group">
+                <label for="Pension_Id">Pensión</label>
+                @Html.DropDownListFor(p => p.Pension.Id, new SelectList(Model.Pensiones, "Id", "Nombre"), "Seleccione pension", new {@class = "form-control"})
+            </div>
+
+            @Html.HiddenFor(i => i.Flujo.Id)
+            <div class="text-center">
+                <button type="submit" class="btn btn-green">Guardar</button>
+            </div>
+        }
+    </div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+
+        $(document).ready(function() {
+            var monto = parseFloat(@Model.Flujo.Monto);
+        });
+
+        $(function() {
+
+            var flujoId = "@Model.Flujo.Id";
+
+            if (flujoId != '0') {
+
+
+            $.ajax({
+                type: "GET",
+                url: "/api/miembros/" + flujoId,
+                success: function(data) {
+                        $('#Miembro_Id').val(data.miembroId);
+                    }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/api/pensiones/" + flujoId,
+                success: function(data) {
+                    $('#Pension_Id').val(data.pensionId);
+
+                    //remuneracion no descontada
+                    var monto = parseFloat(@Model.Flujo.Monto) / (1 - data.aporte);
+                    console.log(monto);
+                    $('#Flujo_Monto').val(monto);
+
+                }
+            });
+
+            }
+
+        });
+
+    </script>
+}
+
+

@@ -1,0 +1,139 @@
+﻿@model Cashflow.ViewModels.PagoFormViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Pagos</h2>
+
+
+<div class="container">
+        
+    @using (Html.BeginForm("Save", "Pensiones"))
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="text-center" style="margin-bottom: 20px">Remuneraciones</h3>
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Remuneracion, new {@class = "col-md-3 control-label"})
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(p => p.Remuneracion, new {@class = "form-control"})
+                    </div>
+                    <div class="col-md-12">
+                        <hr class="home-footer"/>
+                    </div>
+                </div>         
+                <div class="col-md-12">
+                    <h4 id="remAfe">Remuneracion Afecta: 0.00</h4>
+                </div>              
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-center" style="margin-bottom: 20px">Descuentos</h3>
+                <div class="form-group">
+                    @Html.LabelFor(p => p.Seguro, new {@class = "col-md-2 control-label"})
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.Seguro, new {@class = "form-control"})
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="seguroId">Seguro</label>
+                    <select class="form-control" data-val="true" data-val-number="The field Id must be a number." data-val-required="El campo miembro es obligatorio" id="seguroId" name="Miembro.Id"><option value="">Seleccione seguro</option>
+                        <option value="2">ONP</option>
+                        <option value="3">AFP Habitad</option>
+                        <option value="4">AFP Integra</option>
+                        <option value="5">AFP Prima</option>
+                        <option value="6">AFP Profuturo</option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-12">
+                    <hr class="home-footer"/>
+                </div>
+                    
+                <div class="col-md-12">
+                    <h4 id="totDes">Total Descuentos: 0.00</h4>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-9"></div>
+            <div class="col-md-3">
+                <h3 class="text-center" id="totalPago">Total: 0.00</h3>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        $('#Remuneracion').val('');
+        $('#Seguro').val('');
+
+        $(document).ready(function() {
+
+            $('#Remuneracion').bind('keypress keyup blur',
+                function() {
+                    updateRemAfecta();
+                    updateTotalDescts();
+                    updateTotalPago();
+                });
+
+            $('#Seguro').bind('keypress keyup blur',
+                function() {
+                    updateTotalDescts();
+                    updateTotalPago();
+                });
+
+            function updateRemAfecta() {
+                var remAfe = parseFloat($('#Remuneracion').val()).toFixed(2);
+
+                if (!isNaN(remAfe)) {
+                    $('#remAfe').text('Remuneracion Afecta: ' + remAfe);
+                } else {
+                    $('#remAfe').text('Remuneracion Afecta: 0.00');
+                }
+
+            }
+
+            function updateTotalDescts() {
+                var rem = parseInt($('#Remuneracion').val()) + 0;
+                var desct = (parseFloat($('#Seguro').val()) + 0) / 100;
+                var totalDscts = (rem * desct).toFixed(2);
+
+                if (!isNaN(totalDscts)) {
+                    $('#totDes').text('Total Descuentos: ' + totalDscts);
+                } else {
+                    $('#totDes').text('Total Descuentos: 0.00');
+                }
+
+            }
+
+            function updateTotalPago() {
+                var rem = (parseInt($('#Remuneracion').val()) + 0).toFixed(2);
+                var desct = (parseFloat($('#Seguro').val()) + 0) / 100;
+                var totalDscts = (rem * desct);
+                var totalPago = (rem - totalDscts).toFixed(2);
+
+                if (!isNaN(totalPago)) {
+                    $('#totalPago').text('Total: ' + totalPago);
+                }else if (!isNaN(rem)) {
+                    $('#totalPago').text('Total: ' + rem);
+                }else  {
+                    $('#totalPago').text('Total: 0.00');
+                }
+
+            }
+
+        });
+
+    </script>
+}
+
+

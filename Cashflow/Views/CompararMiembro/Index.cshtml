@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @Scripts.Render("~/bundles/chart")
+}
+
+<div class="container" style="position: relative;">  
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <h3 class="text-center">Ingresos</h3>
+            <canvas id="ingresos"></canvas>
+        </div>
+        <div class="col-md-5">
+            <h3 class="text-center">Gastos</h3>
+            <canvas id="gastos"></canvas>
+        </div>
+        <div class="col-md-1"></div>
+
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $.ajax({
+                type: "GET",
+                url: "/api/comparar/miembro/2017/" + "@User.Identity.GetUserId()",
+                success: function(data) {
+
+                    console.log(data.ingresos);
+                    
+                    var configIngresos = {
+                        type: 'pie',
+                        data: {
+                            datasets: [{
+                                data: data.ingresos
+                                ,
+                                backgroundColor: data.colors
+                                ,
+                                label: 'Dataset 1'
+                            }],
+                            labels: data.miembros          
+                        },
+                        options: {
+                            responsive: true
+                        }
+                    };
+
+                    var configGastos = {
+                        type: 'pie',
+                        data: {
+                            datasets: [{
+                                data: data.gastos
+                                ,
+                                backgroundColor: data.colors
+                                ,
+                                label: 'Dataset 1'
+                            }],
+                            labels: data.miembros          
+                        },
+                        options: {
+                            responsive: true
+                        }
+                    };
+                    
+                    
+                    var ctxIng = document.getElementById("ingresos").getContext("2d");
+                    var ctxGas = document.getElementById("gastos").getContext("2d");
+
+                    window.myPie = new Chart(ctxIng, configIngresos);
+                    window.myPie = new Chart(ctxGas, configGastos);
+
+
+
+                }
+            });
+        });
+
+
+</script>
+}

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Cashflow.ViewModels.MiembroIndexViewModel>
+@{
+    ViewBag.Title = "Miembros";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div style="margin-bottom: 30px" class="row">
+<div class="col-md-8 col-md-offset-2">
+
+    <div style="padding-left: 0; padding-right: 0" class="col-md-12">
+        <h2 class="pull-left">Miembros</h2>
+        <h2 class="pull-right">@Html.ActionLink("Nuevo", "New", "Miembros")</h2>
+    </div>
+   </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th class="text-center">Nombre</th>
+                <th class="text-center">Edad</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var viewModel in Model)
+            {
+                <tr>
+                    <td class="text-center">@Html.ActionLink(viewModel.Miembro.Nombre, "Edit", "Miembros", new {id = viewModel.Miembro.Id}, null)</td>
+                    <td class="text-center">@viewModel.Edad</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>

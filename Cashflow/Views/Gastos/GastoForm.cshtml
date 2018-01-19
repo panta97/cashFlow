@@ -1,0 +1,121 @@
+﻿@using Microsoft.Ajax.Utilities
+@model Cashflow.ViewModels.IngresoFormViewModel
+
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@if (Model.Flujo.Id == 0)
+{
+    <h2 class="text-center">Nuevo Gasto</h2>
+}
+else
+{
+    <h2 class="text-center">Editar</h2>
+}
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        @using (Html.BeginForm("Save", "Gastos"))
+        {
+            <div class="form-group">
+                <label for="Miembro_Id">Miembro</label>
+                    @Html.DropDownListFor(p => p.Miembro.Id, new SelectList(Model.Miembros, "Id", "Nombre"), "Seleccione miembro", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(p => p.Miembro.Id)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(i => i.Flujo.Nombre)
+                @Html.TextBoxFor(i => i.Flujo.Nombre, new { @class = "form-control" })
+                @Html.ValidationMessageFor(i => i.Flujo.Nombre)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(i => i.Flujo.Monto)
+                <div class="input-group">
+                    <span class="input-group-addon">S/.</span>
+                    @Html.TextBoxFor(i => i.Flujo.Monto, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(i => i.Flujo.Monto)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(i => i.Flujo.Fecha)
+                <div class='input-group date' id='datetimepicker1'>
+                    @Html.TextBoxFor(i => i.Flujo.Fecha, "{0:MM/dd/yy}", new { @class = "form-control" })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(i => i.Flujo.Fecha)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(p => p.Flujo.PeriodoId)
+                @Html.DropDownListFor(p => p.Flujo.PeriodoId, new SelectList(Model.Periodos, "Id", "Nombre"), "Seleccione periodo", new { @class = "form-control" })
+                @Html.ValidationMessageFor(p => p.Flujo.PeriodoId)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(i => i.Flujo.FechaFin)
+                <div class='input-group date' id='datetimepicker2'>
+                    @Html.TextBoxFor(i => i.Flujo.FechaFin, "{0:MM/dd/yy}", new { @class = "form-control end-date" })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(i => i.Flujo.FechaFin)
+            </div>
+
+
+            @Html.HiddenFor(i => i.Flujo.Id)
+            <div class="text-center">
+                <button type="submit" class="btn btn-green">Guardar</button>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/datetime/scripts")
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <script type="text/javascript">
+
+        var date = "@Model.Flujo.Fecha.Date";
+
+        $(function () {
+            $('#datetimepicker1').datetimepicker({
+                format: 'MM/DD/YY',
+                defaultDate: new Date(date)
+            });
+        });
+
+        $(function () {
+            $('#datetimepicker2').datetimepicker({
+                format: 'MM/DD/YY',
+                defaultDate: new Date(date)
+            });
+        });
+
+        $(function() {
+            $.ajax({
+                type: "GET",
+                url: "/api/miembros/" + "@Model.Flujo.Id",
+                success: function(data) {
+                    console.log(data.miembroId);
+                    $('#Miembro_Id').val(data.miembroId);
+                }
+            });
+        });
+
+    </script>
+}
+
+

@@ -1,0 +1,8 @@
+﻿.field-validation-error {
+    color: #CB48B7;
+    font-weight: bold;
+}
+
+.input-validation-error {
+    border: 2px dashed #CB48B7;
+}
